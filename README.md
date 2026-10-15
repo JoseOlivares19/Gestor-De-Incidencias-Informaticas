@@ -27,7 +27,21 @@ web integrado/
 
 ## 🛠️ Ejecución del Proyecto
 
-### 1. Backend (Spring Boot)
+### 1. Base de Datos (MySQL)
+
+Puedes crear la base de datos y cargar todos los datos de prueba ejecutando el script [`backend/database.sql`](backend/database.sql) en MySQL Workbench o por consola:
+
+```bash
+mysql -u root -p < backend/database.sql
+```
+
+El script incluye:
+- Definición de tablas (`roles`, `usuarios`, `incidencias`, `soluciones`) con claves foráneas e integridad referencial.
+- **30 usuarios pre-registrados** (10 Administradores TI, 10 Técnicos de Soporte y 10 Colaboradores), todos con contraseña `password123`.
+- **12 incidencias de prueba** en estados `PENDIENTE`, `EN_PROCESO` y `RESUELTO`.
+- Soluciones documentadas con diagnósticos y acciones correctivas.
+
+### 2. Backend (Spring Boot)
 
 ```bash
 cd backend
@@ -35,7 +49,7 @@ cd backend
 ```
 El servidor backend se ejecutará en: `http://localhost:8080`
 
-### 2. Frontend (Angular)
+### 3. Frontend (Angular)
 
 ```bash
 cd frontend
@@ -59,3 +73,4 @@ El sistema inicializa automáticamente las siguientes cuentas al arrancar el bac
 | **Colaborador** | `colaborador@empresa.com` | `password123` | Operaciones |
 
 > La pantalla de Login incluye botones de acceso rápido de un solo clic para cada uno de estos roles.
+
