@@ -1,0 +1,74 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <h2>📊 Estadísticas del Sistema</h2>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-center"><div class="spinner"></div></div>
+  } @else if (error()) {
+    <div class="alert alert--error">{{ error() }}</div>
+  } @else if (stats(); as s) {
+    <!-- Resumen general -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card__icon">📋</div>
+        <div class="stat-card__label">Total Incidencias</div>
+        <div class="stat-card__value">{{ s.pendientes + s.enProceso + s.resueltas }}</div>
+      </div>
+      <div class="stat-card stat-card--warning">
+        <div class="stat-card__icon">⏳</div>
+        <div class="stat-card__label">Pendientes</div>
+        <div class="stat-card__value">{{ s.pendientes }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__icon">🔧</div>
+        <div class="stat-card__label">En Proceso</div>
+        <div class="stat-card__value">{{ s.enProceso }}</div>
+      </div>
+      <div class="stat-card stat-card--success">
+        <div class="stat-card__icon">✅</div>
+        <div class="stat-card__label">Resueltas</div>
+        <div class="stat-card__value">{{ s.resueltas }}</div>
+      </div>
+    </div>
+
+    <div class="stats-detail-grid">
+      <!-- Por categoría -->
+      <div class="card">
+        <div class="card__header">📂 Por Categoría</div>
+        @if (categorias.length === 0) {
+          <p class="text-muted">Sin datos</p>
+        } @else {
+          @for (cat of categorias; track cat.nombre) {
+            <div class="stat-row">
+              <span class="badge badge--{{ cat.nombre }}">{{ cat.nombre }}</span>
+              <div class="stat-bar-wrapper">
+                <div class="stat-bar" [style.width.%]="(cat.valor / (s.totalIncidencias || 1)) * 100"></div>
+              </div>
+              <span class="stat-num">{{ cat.valor }}</span>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Por prioridad -->
+      <div class="card">
+        <div class="card__header">⚡ Por Prioridad</div>
+        @if (prioridades.length === 0) {
+          <p class="text-muted">Sin datos</p>
+        } @else {
+          @for (prio of prioridades; track prio.nombre) {
+            <div class="stat-row">
+              <span class="badge badge--{{ prio.nombre }}">{{ prio.nombre }}</span>
+              <div class="stat-bar-wrapper">
+                <div class="stat-bar stat-bar--{{ prio.nombre }}" [style.width.%]="(prio.valor / (s.totalIncidencias || 1)) * 100"></div>
+              </div>
+              <span class="stat-num">{{ prio.valor }}</span>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>
+

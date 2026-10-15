@@ -1,0 +1,105 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <h2>👥 Gestión de Usuarios</h2>
+    <button class="btn btn--primary" (click)="abrirCrear()">➕ Nuevo Usuario</button>
+  </div>
+
+  @if (errorMsg()) { <div class="alert alert--error">{{ errorMsg() }}</div> }
+  @if (successMsg()) { <div class="alert alert--success">{{ successMsg() }}</div> }
+
+  <!-- Formulario modal-like -->
+  @if (showForm) {
+    <div class="card mb-2" style="max-width: 620px; margin: 0 auto 1.5rem;">
+      <div class="card__header">{{ editingId ? '✏️ Editar' : '➕ Crear' }} Usuario</div>
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+        <div class="form-group">
+          <label>Correo Corporativo *</label>
+          <input type="email" formControlName="correoCorporativo" placeholder="usuario@empresa.com" />
+          @if (f['correoCorporativo'].invalid && f['correoCorporativo'].touched) {
+            <span class="form-error">Correo válido requerido.</span>
+          }
+        </div>
+        <div class="form-group">
+          <label>Contraseña {{ editingId ? '(dejar vacío para mantener)' : '*' }}</label>
+          <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres" />
+          @if (f['password'].invalid && f['password'].touched) {
+            <span class="form-error">Mínimo 6 caracteres.</span>
+          }
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Área *</label>
+            <input type="text" formControlName="area" placeholder="Ej: TI, Contabilidad" />
+          </div>
+          <div class="form-group">
+            <label>Rol *</label>
+            <select formControlName="rol">
+              <option value="">Seleccionar...</option>
+              <option value="ADMINISTRADOR_TI">Administrador TI</option>
+              <option value="TECNICO_SOPORTE">Técnico Soporte</option>
+              <option value="COLABORADOR">Colaborador</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Estado</label>
+          <select formControlName="activo">
+            <option [value]="true">Activo</option>
+            <option [value]="false">Inactivo</option>
+          </select>
+        </div>
+        <div class="flex-gap">
+          <button type="submit" class="btn btn--success" [disabled]="saving()">
+            @if (saving()) { <span class="spinner spinner--sm"></span> } @else { 💾 Guardar }
+          </button>
+          <button type="button" class="btn btn--outline" (click)="cancelar()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- Tabla -->
+  @if (loading()) {
+    <div class="loading-center"><div class="spinner"></div></div>
+  } @else if (usuarios().length === 0) {
+    <p class="empty-state">No hay usuarios registrados.</p>
+  } @else {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Correo Corporativo</th>
+            <th>Área</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of usuarios(); track u.id) {
+            <tr>
+              <td>{{ u.id }}</td>
+              <td>{{ u.correoCorporativo }}</td>
+              <td>{{ u.area }}</td>
+              <td><span class="badge badge--SOFTWARE">{{ u.rol }}</span></td>
+              <td>
+                @if (u.activo) {
+                  <span class="badge badge--RESUELTO">Activo</span>
+                } @else {
+                  <span class="badge badge--ALTA">Inactivo</span>
+                }
+              </td>
+              <td>
+                <div class="actions-col">
+                  <button class="btn btn--outline btn--sm" (click)="abrirEditar(u)">✏️ Editar</button>
+                  <button class="btn btn--danger btn--sm" (click)="eliminar(u.id)">🗑️</button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

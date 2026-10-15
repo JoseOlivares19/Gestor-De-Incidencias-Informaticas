@@ -1,0 +1,87 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-card__header">
+      <div class="login-card__icon">🛡️</div>
+      <h1>Gestor de Incidencias</h1>
+      <p>Accede con un rol de prueba o ingresa tus credenciales</p>
+    </div>
+
+    @if (errorMsg) {
+      <div class="alert alert--error">{{ errorMsg }}</div>
+    }
+
+    <!-- Botones de acceso rápido para demostración -->
+    <div class="demo-section">
+      <div class="demo-title">⚡ Acceso Rápido por Rol</div>
+      <div class="demo-buttons">
+        @for (cuenta of cuentasDemo; track cuenta.correo) {
+          <button
+            type="button"
+            class="demo-btn"
+            [disabled]="loading"
+            (click)="ingresarComo(cuenta.correo)"
+            [title]="'Ingresar como ' + cuenta.rol"
+          >
+            <span class="demo-btn__icon">{{ cuenta.icono }}</span>
+            <div class="demo-btn__info">
+              <span class="demo-btn__role">{{ cuenta.rol }}</span>
+              <span class="demo-btn__email">{{ cuenta.correo }}</span>
+            </div>
+            <span class="demo-btn__arrow">→</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="divider">
+      <span>o ingresa manualmente</span>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-group">
+        <label for="email">Correo Corporativo</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="correoCorporativo"
+          placeholder="usuario@empresa.com"
+          autocomplete="email"
+        />
+        @if (email.invalid && email.touched) {
+          <span class="form-error">Ingresa un correo válido.</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="pass">Contraseña</label>
+        <input
+          id="pass"
+          type="password"
+          formControlName="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+        />
+        @if (pass.invalid && pass.touched) {
+          <span class="form-error">Mínimo 6 caracteres.</span>
+        }
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn--primary btn--lg btn--block"
+        [disabled]="loading"
+      >
+        @if (loading) {
+          <span class="spinner spinner--sm"></span> Ingresando...
+        } @else {
+          Iniciar Sesión
+        }
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <small>Clave por defecto: <code>password123</code></small>
+    </div>
+  </div>
+</div>
+

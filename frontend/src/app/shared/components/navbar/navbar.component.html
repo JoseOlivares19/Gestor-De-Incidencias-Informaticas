@@ -1,0 +1,35 @@
+<nav class="navbar">
+  <div class="navbar__brand">
+    <a routerLink="/dashboard" class="navbar__logo">
+      🛡️ GestorIncidencias
+    </a>
+  </div>
+
+  <button class="navbar__toggle" (click)="toggleMenu()" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="navbar__menu" [class.navbar__menu--open]="menuOpen">
+    <a routerLink="/incidencias" routerLinkActive="active" (click)="closeMenu()">
+      📋 Incidencias
+    </a>
+    <a routerLink="/incidencias/nueva" routerLinkActive="active" (click)="closeMenu()">
+      ➕ Nueva
+    </a>
+    @if (auth.isAdmin()) {
+      <a routerLink="/usuarios" routerLinkActive="active" (click)="closeMenu()">
+        👥 Usuarios
+      </a>
+      <a routerLink="/estadisticas" routerLinkActive="active" (click)="closeMenu()">
+        📊 Estadísticas
+      </a>
+    }
+
+    <div class="navbar__user">
+      <span class="navbar__badge">{{ user?.rol }}</span>
+      <span class="navbar__email">{{ user?.correoCorporativo }}</span>
+      <button class="btn btn--danger btn--sm" (click)="logout()">Salir</button>
+    </div>
+  </div>
+</nav>
+

@@ -1,0 +1,128 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <h2>🔍 Detalle de Incidencia</h2>
+    <a routerLink="/incidencias" class="btn btn--outline">← Volver</a>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-center"><div class="spinner"></div></div>
+  } @else if (error() && !incidencia()) {
+    <div class="alert alert--error">{{ error() }}</div>
+  } @else if (incidencia(); as inc) {
+
+    @if (error()) { <div class="alert alert--error">{{ error() }}</div> }
+    @if (successMsg()) { <div class="alert alert--success">{{ successMsg() }}</div> }
+
+    <!-- Info principal -->
+    <div class="card mb-2">
+      <div class="detail-header">
+        <div>
+          <code class="detail-code">{{ inc.codigo }}</code>
+          <h3 class="detail-title">{{ inc.titulo }}</h3>
+        </div>
+        <div class="flex-gap">
+          <span class="badge badge--{{ inc.estado }}">{{ inc.estado }}</span>
+          <span class="badge badge--{{ inc.prioridad }}">{{ inc.prioridad }}</span>
+          <span class="badge badge--{{ inc.categoria }}">{{ inc.categoria }}</span>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-field">
+          <span class="detail-label">Descripción</span>
+          <p>{{ inc.descripcion }}</p>
+        </div>
+        <div class="detail-field">
+          <span class="detail-label">Área Afectada</span>
+          <p>{{ inc.areaAfectada }}</p>
+        </div>
+        <div class="detail-field">
+          <span class="detail-label">Reportado por</span>
+          <p>{{ inc.usuarioReportadorCorreo }}</p>
+        </div>
+        <div class="detail-field">
+          <span class="detail-label">Técnico Asignado</span>
+          <p>{{ inc.tecnicoAsignadoCorreo ?? 'Sin asignar' }}</p>
+        </div>
+        <div class="detail-field">
+          <span class="detail-label">Fecha de Creación</span>
+          <p>{{ inc.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="actions-grid">
+
+      <!-- Cambiar Estado -->
+      @if (inc.estado !== 'RESUELTO') {
+        <div class="card">
+          <div class="card__header">🔄 Cambiar Estado</div>
+          <form [formGroup]="estadoForm" (ngSubmit)="cambiarEstado()">
+            <div class="form-group">
+              <label>Nuevo Estado</label>
+              <select formControlName="estado">
+                <option value="">Seleccionar...</option>
+                @if (inc.estado === 'PENDIENTE') {
+                  <option value="EN_PROCESO">En Proceso</option>
+                }
+                @if (inc.estado === 'EN_PROCESO') {
+                  <option value="PENDIENTE">Pendiente</option>
+                }
+              </select>
+            </div>
+            <button type="submit" class="btn btn--warning" [disabled]="saving()">
+              @if (saving()) { <span class="spinner spinner--sm"></span> } @else { Actualizar }
+            </button>
+          </form>
+        </div>
+      }
+
+      <!-- Asignar Técnico (solo admin) -->
+      @if (isAdmin) {
+        <div class="card">
+          <div class="card__header">👨‍💻 Asignar Técnico</div>
+          <form [formGroup]="asignarForm" (ngSubmit)="asignar()">
+            <div class="form-group">
+              <label>Técnico</label>
+              <select formControlName="tecnicoId">
+                <option value="">Seleccionar técnico...</option>
+                @for (t of tecnicos(); track t.id) {
+                  <option [value]="t.id">{{ t.correoCorporativo }} ({{ t.area }})</option>
+                }
+              </select>
+            </div>
+            <button type="submit" class="btn btn--primary" [disabled]="saving()">
+              @if (saving()) { <span class="spinner spinner--sm"></span> } @else { Asignar }
+            </button>
+          </form>
+        </div>
+      }
+
+      <!-- Registrar Solución -->
+      @if (inc.estado !== 'RESUELTO') {
+        <div class="card">
+          <div class="card__header">✅ Registrar Solución</div>
+          <form [formGroup]="solucionForm" (ngSubmit)="resolver()">
+            <div class="form-group">
+              <label>Descripción de la solución</label>
+              <textarea formControlName="descripcion" placeholder="Describe cómo se resolvió el problema..."></textarea>
+              @if (solucionForm.get('descripcion')!.invalid && solucionForm.get('descripcion')!.touched) {
+                <span class="form-error">La solución es obligatoria.</span>
+              }
+            </div>
+            <button type="submit" class="btn btn--success" [disabled]="saving()">
+              @if (saving()) { <span class="spinner spinner--sm"></span> } @else { Marcar como Resuelto }
+            </button>
+          </form>
+        </div>
+      }
+
+      @if (inc.estado === 'RESUELTO') {
+        <div class="card">
+          <div class="alert alert--success" style="margin:0">✅ Esta incidencia ya fue resuelta.</div>
+        </div>
+      }
+    </div>
+  }
+</div>

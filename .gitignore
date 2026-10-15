@@ -1,0 +1,22 @@
+# IDEs and Editors
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Backend Build
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Frontend Dependencies and Build
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/tmp/
+frontend/out-tsc/
+frontend/bazel-out/

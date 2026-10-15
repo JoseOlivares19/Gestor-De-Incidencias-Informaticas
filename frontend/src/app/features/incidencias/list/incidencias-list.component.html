@@ -1,0 +1,71 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <h2>📋 Incidencias</h2>
+    <a routerLink="/incidencias/nueva" class="btn btn--primary">➕ Nueva Incidencia</a>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert--error">{{ error() }}</div>
+  }
+
+  <!-- Filtros -->
+  <div class="filters card mb-2">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Buscar</label>
+        <input type="text" [(ngModel)]="filtroTexto" placeholder="Código o título..." />
+      </div>
+      <div class="form-group">
+        <label>Estado</label>
+        <select [(ngModel)]="filtroEstado">
+          <option value="">Todos</option>
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="EN_PROCESO">En Proceso</option>
+          <option value="RESUELTO">Resuelto</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-center"><div class="spinner"></div></div>
+  } @else if (filtradas.length === 0) {
+    <p class="empty-state">🔍 No se encontraron incidencias.</p>
+  } @else {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Título</th>
+            <th>Categoría</th>
+            <th>Estado</th>
+            <th>Prioridad</th>
+            <th>Reportado por</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (inc of filtradas; track inc.id) {
+            <tr>
+              <td><code>{{ inc.codigo }}</code></td>
+              <td>{{ inc.titulo }}</td>
+              <td><span class="badge badge--{{ inc.categoria }}">{{ inc.categoria }}</span></td>
+              <td><span class="badge badge--{{ inc.estado }}">{{ inc.estado }}</span></td>
+              <td><span class="badge badge--{{ inc.prioridad }}">{{ inc.prioridad }}</span></td>
+              <td class="text-muted" style="font-size:0.85rem">{{ inc.usuarioReportadorCorreo }}</td>
+              <td>{{ inc.fechaCreacion | date:'dd/MM/yy HH:mm' }}</td>
+              <td>
+                <div class="actions-col">
+                  <a [routerLink]="['/incidencias', inc.id]" class="btn btn--outline btn--sm">Ver</a>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="text-muted mt-1" style="font-size:0.85rem; text-align:right">{{ filtradas.length }} incidencia(s)</p>
+  }
+</div>

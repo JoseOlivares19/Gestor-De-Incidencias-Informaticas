@@ -1,0 +1,42 @@
+.stats-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.9rem;
+
+  .badge { min-width: 100px; text-align: center; flex-shrink: 0; }
+}
+
+.stat-bar-wrapper {
+  flex: 1;
+  background: var(--color-border);
+  border-radius: 20px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.stat-bar {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 20px;
+  transition: width 0.5s ease;
+  min-width: 2px;
+
+  &--ALTA   { background: var(--color-danger); }
+  &--MEDIA  { background: var(--color-warning); }
+  &--BAJA   { background: var(--color-success); }
+}
+
+.stat-num {
+  font-weight: 700;
+  color: var(--color-text);
+  min-width: 28px;
+  text-align: right;
+}
+

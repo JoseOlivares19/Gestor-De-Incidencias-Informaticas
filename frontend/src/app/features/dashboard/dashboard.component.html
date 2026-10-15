@@ -1,0 +1,73 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="text-muted">Bienvenido, <strong>{{ user?.correoCorporativo }}</strong></p>
+    </div>
+    <a routerLink="/incidencias/nueva" class="btn btn--primary">➕ Nueva Incidencia</a>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-center"><div class="spinner"></div></div>
+  } @else {
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card__icon">📋</div>
+        <div class="stat-card__label">Total</div>
+        <div class="stat-card__value">{{ incidencias().length }}</div>
+      </div>
+      <div class="stat-card stat-card--warning">
+        <div class="stat-card__icon">⏳</div>
+        <div class="stat-card__label">Pendientes</div>
+        <div class="stat-card__value">{{ pendientes }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__icon">🔧</div>
+        <div class="stat-card__label">En Proceso</div>
+        <div class="stat-card__value">{{ enProceso }}</div>
+      </div>
+      <div class="stat-card stat-card--success">
+        <div class="stat-card__icon">✅</div>
+        <div class="stat-card__label">Resueltas</div>
+        <div class="stat-card__value">{{ resueltas }}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__header">📌 Últimas Incidencias</div>
+      @if (recientes.length === 0) {
+        <p class="empty-state">No hay incidencias registradas aún.</p>
+      } @else {
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Título</th>
+                <th>Estado</th>
+                <th>Prioridad</th>
+                <th>Fecha</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (inc of recientes; track inc.id) {
+                <tr>
+                  <td><code>{{ inc.codigo }}</code></td>
+                  <td>{{ inc.titulo }}</td>
+                  <td><span class="badge badge--{{ inc.estado }}">{{ inc.estado }}</span></td>
+                  <td><span class="badge badge--{{ inc.prioridad }}">{{ inc.prioridad }}</span></td>
+                  <td>{{ inc.fechaCreacion | date:'dd/MM/yyyy' }}</td>
+                  <td><a [routerLink]="['/incidencias', inc.id]" class="btn btn--outline btn--sm">Ver</a></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-2">
+          <a routerLink="/incidencias" class="btn btn--outline">Ver todas →</a>
+        </div>
+      }
+    </div>
+  }
+</div>
