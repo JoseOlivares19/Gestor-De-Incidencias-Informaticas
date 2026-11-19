@@ -30,10 +30,15 @@ export class IncidenciaDetailComponent implements OnInit {
   successMsg = signal('');
 
   estadoForm = this.fb.group({ estado: ['', Validators.required] });
-  solucionForm = this.fb.group({ descripcion: ['', Validators.required] });
+  solucionForm = this.fb.group({
+    diagnostico: ['', [Validators.required, Validators.minLength(5)]],
+    accionesCorrectivas: ['', [Validators.required, Validators.minLength(5)]],
+    detalleSolucion: ['', [Validators.required, Validators.minLength(5)]]
+  });
   asignarForm = this.fb.group({ tecnicoId: ['', Validators.required] });
 
   get isAdmin() { return this.auth.isAdmin(); }
+  get sf() { return this.solucionForm.controls; }
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -60,11 +65,21 @@ export class IncidenciaDetailComponent implements OnInit {
 
   resolver() {
     const inc = this.incidencia();
-    if (!inc || this.solucionForm.invalid) return;
+    if (!inc || this.solucionForm.invalid) {
+      this.solucionForm.markAllAsTouched();
+      return;
+    }
     this.saving.set(true);
     this.svc.resolver(inc.id, this.solucionForm.value as any).subscribe({
-      next: data => { this.incidencia.set(data); this.saving.set(false); this.flash('Incidencia resuelta.'); },
-      error: () => { this.saving.set(false); this.error.set('Error al registrar solución.'); }
+      next: data => {
+        this.incidencia.set(data);
+        this.saving.set(false);
+        this.flash('Solución registrada e incidencia marcada como RESUELTA.');
+      },
+      error: err => {
+        this.saving.set(false);
+        this.error.set(err.error?.message || 'Error al registrar solución.');
+      }
     });
   }
 

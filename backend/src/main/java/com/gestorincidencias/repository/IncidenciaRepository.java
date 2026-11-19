@@ -19,4 +19,7 @@ public interface IncidenciaRepository extends JpaRepository<Incidencia, Long>, J
     
     @Query("SELECT i.categoria, COUNT(i) FROM Incidencia i GROUP BY i.categoria")
     List<Object[]> countGroupedByCategoria();
+
+    @Query("SELECT i.prioridad, COUNT(i) FROM Incidencia i GROUP BY i.prioridad")
+    List<Object[]> countGroupedByPrioridad();
 }

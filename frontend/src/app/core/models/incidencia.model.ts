@@ -24,6 +24,16 @@ export interface IncidenciaResponse {
   usuarioReportadorCorreo: string;
   tecnicoAsignadoId: number | null;
   tecnicoAsignadoCorreo: string | null;
+  solucion?: SolucionResponse | null;
+}
+
+export interface SolucionResponse {
+  id: number;
+  diagnostico: string;
+  accionesCorrectivas: string;
+  detalleSolucion: string;
+  fechaCierre: string;
+  tiempoAtencionMinutos: number;
 }
 
 export interface AsignarTecnicoRequest {
@@ -35,14 +45,18 @@ export interface EstadoRequest {
 }
 
 export interface SolucionRequest {
-  descripcion: string;
+  diagnostico: string;
+  accionesCorrectivas: string;
+  detalleSolucion: string;
 }
 
 export interface EstadisticasResponse {
-  totalIncidencias: number;
+  total?: number;
+  totalIncidencias?: number;
   pendientes: number;
   enProceso: number;
   resueltas: number;
+  promedioAtencionMinutos?: number;
   porCategoria: { [key: string]: number };
   porPrioridad: { [key: string]: number };
 }

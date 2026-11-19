@@ -6,6 +6,7 @@ import com.gestorincidencias.model.dto.AsignarTecnicoDto;
 import com.gestorincidencias.model.dto.IncidenciaRequestDto;
 import com.gestorincidencias.model.dto.IncidenciaResponseDto;
 import com.gestorincidencias.model.dto.SolucionRequestDto;
+import com.gestorincidencias.model.dto.SolucionResponseDto;
 import com.gestorincidencias.model.entity.*;
 import com.gestorincidencias.repository.IncidenciaRepository;
 import com.gestorincidencias.repository.SolucionRepository;
@@ -134,8 +135,10 @@ public class IncidenciaService {
 
     @Transactional(readOnly = true)
     public Object estadisticas() {
+        long total = incidenciaRepository.count();
         return new Estadisticas(
-                incidenciaRepository.count(),
+                total,
+                total,
                 incidenciaRepository.countByEstado(EstadoIncidencia.PENDIENTE),
                 incidenciaRepository.countByEstado(EstadoIncidencia.EN_PROCESO),
                 incidenciaRepository.countByEstado(EstadoIncidencia.RESUELTO),
@@ -143,6 +146,10 @@ public class IncidenciaService {
                 incidenciaRepository.countGroupedByCategoria().stream()
                         .collect(java.util.stream.Collectors.toMap(
                                 row -> ((CategoriaIncidencia) row[0]).name(),
+                                row -> ((Number) row[1]).longValue())),
+                incidenciaRepository.countGroupedByPrioridad().stream()
+                        .collect(java.util.stream.Collectors.toMap(
+                                row -> ((PrioridadIncidencia) row[0]).name(),
                                 row -> ((Number) row[1]).longValue())));
     }
 
@@ -229,15 +236,29 @@ public class IncidenciaService {
             response.setTecnicoAsignadoId(incidencia.getTecnicoAsignado().getId());
             response.setTecnicoAsignadoCorreo(incidencia.getTecnicoAsignado().getCorreoCorporativo());
         }
+        if (incidencia.getSolucion() != null) {
+            Solucion s = incidencia.getSolucion();
+            SolucionResponseDto solucionDto = new SolucionResponseDto(
+                    s.getId(),
+                    s.getDiagnostico(),
+                    s.getAccionesCorrectivas(),
+                    s.getDetalleSolucion(),
+                    s.getFechaCierre(),
+                    s.getTiempoAtencionMinutos()
+            );
+            response.setSolucion(solucionDto);
+        }
         return response;
     }
 
     public record Estadisticas(
             long total,
+            long totalIncidencias,
             long pendientes,
             long enProceso,
             long resueltas,
             Double promedioAtencionMinutos,
-            java.util.Map<String, Long> porCategoria) {
+            java.util.Map<String, Long> porCategoria,
+            java.util.Map<String, Long> porPrioridad) {
     }
 }

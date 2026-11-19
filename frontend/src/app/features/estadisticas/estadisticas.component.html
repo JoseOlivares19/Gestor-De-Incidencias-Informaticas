@@ -43,7 +43,7 @@
             <div class="stat-row">
               <span class="badge badge--{{ cat.nombre }}">{{ cat.nombre }}</span>
               <div class="stat-bar-wrapper">
-                <div class="stat-bar" [style.width.%]="(cat.valor / (s.totalIncidencias || 1)) * 100"></div>
+                <div class="stat-bar" [style.width.%]="(cat.valor / (s.totalIncidencias || s.total || 1)) * 100"></div>
               </div>
               <span class="stat-num">{{ cat.valor }}</span>
             </div>
@@ -61,7 +61,7 @@
             <div class="stat-row">
               <span class="badge badge--{{ prio.nombre }}">{{ prio.nombre }}</span>
               <div class="stat-bar-wrapper">
-                <div class="stat-bar stat-bar--{{ prio.nombre }}" [style.width.%]="(prio.valor / (s.totalIncidencias || 1)) * 100"></div>
+                <div class="stat-bar stat-bar--{{ prio.nombre }}" [style.width.%]="(prio.valor / (s.totalIncidencias || s.total || 1)) * 100"></div>
               </div>
               <span class="stat-num">{{ prio.valor }}</span>
             </div>

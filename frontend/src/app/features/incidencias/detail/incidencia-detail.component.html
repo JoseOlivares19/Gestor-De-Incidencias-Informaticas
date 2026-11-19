@@ -102,25 +102,67 @@
       <!-- Registrar Solución -->
       @if (inc.estado !== 'RESUELTO') {
         <div class="card">
-          <div class="card__header">✅ Registrar Solución</div>
+          <div class="card__header">✅ Registrar Solución y Cerrar Incidencia</div>
           <form [formGroup]="solucionForm" (ngSubmit)="resolver()">
             <div class="form-group">
-              <label>Descripción de la solución</label>
-              <textarea formControlName="descripcion" placeholder="Describe cómo se resolvió el problema..."></textarea>
-              @if (solucionForm.get('descripcion')!.invalid && solucionForm.get('descripcion')!.touched) {
-                <span class="form-error">La solución es obligatoria.</span>
+              <label>Diagnóstico Técnico</label>
+              <textarea formControlName="diagnostico" rows="2" placeholder="Diagnóstico de la causa raíz de la falla..."></textarea>
+              @if (sf.diagnostico.invalid && sf.diagnostico.touched) {
+                <span class="form-error">El diagnóstico es obligatorio (mínimo 5 caracteres).</span>
+              }
+            </div>
+            <div class="form-group">
+              <label>Acciones Correctivas</label>
+              <textarea formControlName="accionesCorrectivas" rows="2" placeholder="Acciones técnicas ejecutadas para corregir el problema..."></textarea>
+              @if (sf.accionesCorrectivas.invalid && sf.accionesCorrectivas.touched) {
+                <span class="form-error">Las acciones correctivas son obligatorias.</span>
+              }
+            </div>
+            <div class="form-group">
+              <label>Detalle de la Solución</label>
+              <textarea formControlName="detalleSolucion" rows="2" placeholder="Resultado final de la atención y recomendaciones..."></textarea>
+              @if (sf.detalleSolucion.invalid && sf.detalleSolucion.touched) {
+                <span class="form-error">El detalle de la solución es obligatorio.</span>
               }
             </div>
             <button type="submit" class="btn btn--success" [disabled]="saving()">
-              @if (saving()) { <span class="spinner spinner--sm"></span> } @else { Marcar como Resuelto }
+              @if (saving()) { <span class="spinner spinner--sm"></span> } @else { Marcar como Resuelto y Guardar Solución }
             </button>
           </form>
         </div>
       }
 
       @if (inc.estado === 'RESUELTO') {
-        <div class="card">
-          <div class="alert alert--success" style="margin:0">✅ Esta incidencia ya fue resuelta.</div>
+        <div class="card" style="grid-column: 1 / -1;">
+          <div class="card__header">✅ Información de la Solución Aplicada</div>
+          @if (inc.solucion; as sol) {
+            <div class="detail-grid" style="margin-top: 1rem;">
+              <div class="detail-field">
+                <span class="detail-label">Diagnóstico</span>
+                <p>{{ sol.diagnostico }}</p>
+              </div>
+              <div class="detail-field">
+                <span class="detail-label">Acciones Correctivas</span>
+                <p>{{ sol.accionesCorrectivas }}</p>
+              </div>
+              <div class="detail-field">
+                <span class="detail-label">Detalle de la Solución</span>
+                <p>{{ sol.detalleSolucion }}</p>
+              </div>
+              <div class="detail-field">
+                <span class="detail-label">Fecha de Cierre</span>
+                <p>{{ sol.fechaCierre | date:'dd/MM/yyyy HH:mm' }}</p>
+              </div>
+              <div class="detail-field">
+                <span class="detail-label">Tiempo de Atención</span>
+                <p><strong>{{ sol.tiempoAtencionMinutos }} minutos</strong></p>
+              </div>
+            </div>
+          } @else {
+            <div class="alert alert--success" style="margin: 0.5rem 0 0 0;">
+              Esta incidencia fue marcada como resuelta.
+            </div>
+          }
         </div>
       }
     </div>

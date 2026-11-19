@@ -17,6 +17,7 @@ public class IncidenciaResponseDto {
     private String usuarioReportadorCorreo;
     private Long tecnicoAsignadoId;
     private String tecnicoAsignadoCorreo;
+    private SolucionResponseDto solucion;
 
     public IncidenciaResponseDto() {
     }
@@ -123,5 +124,13 @@ public class IncidenciaResponseDto {
 
     public void setTecnicoAsignadoCorreo(String tecnicoAsignadoCorreo) {
         this.tecnicoAsignadoCorreo = tecnicoAsignadoCorreo;
+    }
+
+    public SolucionResponseDto getSolucion() {
+        return solucion;
+    }
+
+    public void setSolucion(SolucionResponseDto solucion) {
+        this.solucion = solucion;
     }
 }
