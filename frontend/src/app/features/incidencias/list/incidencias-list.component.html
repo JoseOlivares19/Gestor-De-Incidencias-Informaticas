@@ -1,28 +1,71 @@
 <div class="page-wrapper">
+  <!-- Header -->
   <div class="page-header">
-    <h2>📋 Incidencias</h2>
-    <a routerLink="/incidencias/nueva" class="btn btn--primary">➕ Nueva Incidencia</a>
+    <div class="page-title-group">
+      <h2>
+        <span class="title-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+            <rect width="8" height="4" x="8" y="2" rx="1"/>
+            <path d="M9 14h6"/><path d="M9 18h6"/>
+          </svg>
+        </span>
+        Bandeja de Incidencias TI
+      </h2>
+      <p>Gestión, filtrado y seguimiento operativo de tickets de soporte técnico.</p>
+    </div>
+    <div class="page-actions">
+      <a routerLink="/incidencias/nueva" class="btn btn--primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        <span>Nueva Incidencia</span>
+      </a>
+    </div>
   </div>
 
   @if (error()) {
-    <div class="alert alert--error">{{ error() }}</div>
+    <div class="alert alert--error">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span>{{ error() }}</span>
+    </div>
   }
 
-  <!-- Filtros -->
-  <div class="filters card mb-2">
-    <div class="form-row">
-      <div class="form-group">
-        <label>Buscar</label>
-        <input type="text" [(ngModel)]="filtroTexto" placeholder="Código o título..." />
-      </div>
-      <div class="form-group">
-        <label>Estado</label>
-        <select [(ngModel)]="filtroEstado">
-          <option value="">Todos</option>
-          <option value="PENDIENTE">Pendiente</option>
-          <option value="EN_PROCESO">En Proceso</option>
-          <option value="RESUELTO">Resuelto</option>
+  <!-- Modern Filters Toolbar -->
+  <div class="filters-card">
+    <div class="search-box">
+      <span class="search-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </span>
+      <input
+        type="text"
+        [(ngModel)]="filtroTexto"
+        placeholder="Buscar por código (ej. INC-A1B2) o por palabra clave en el título..."
+        class="search-input"
+      />
+      @if (filtroTexto) {
+        <button class="clear-btn" (click)="filtroTexto = ''" title="Limpiar búsqueda">✕</button>
+      }
+    </div>
+
+    <div class="filter-controls">
+      <div class="filter-select-wrapper">
+        <label>Estado:</label>
+        <select [(ngModel)]="filtroEstado" class="filter-select">
+          <option value="">Todos los Estados</option>
+          <option value="PENDIENTE">⏳ Pendientes</option>
+          <option value="EN_PROCESO">🔧 En Proceso</option>
+          <option value="RESUELTO">✅ Resueltos</option>
         </select>
+      </div>
+
+      <div class="counter-chip">
+        <span class="counter-num">{{ filtradas.length }}</span>
+        <span class="counter-label">encontradas</span>
       </div>
     </div>
   </div>
@@ -30,42 +73,78 @@
   @if (loading()) {
     <div class="loading-center"><div class="spinner"></div></div>
   } @else if (filtradas.length === 0) {
-    <p class="empty-state">🔍 No se encontraron incidencias.</p>
+    <div class="card empty-state-card">
+      <div class="empty-icon-wrapper">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+          <line x1="8" y1="11" x2="14" y2="11"/>
+        </svg>
+      </div>
+      <h3>No se encontraron incidencias</h3>
+      <p>No existen tickets que coincidan con los filtros aplicados (texto o estado).</p>
+      <div class="empty-actions">
+        <button class="btn btn--outline btn--sm" (click)="filtroTexto = ''; filtroEstado = ''">Restablecer Filtros</button>
+        <a routerLink="/incidencias/nueva" class="btn btn--primary btn--sm">Crear Nueva Incidencia</a>
+      </div>
+    </div>
   } @else {
     <div class="table-wrapper">
       <table>
         <thead>
           <tr>
-            <th>Código</th>
-            <th>Título</th>
+            <th>Ticket ID</th>
+            <th>Título y Área</th>
             <th>Categoría</th>
             <th>Estado</th>
             <th>Prioridad</th>
             <th>Reportado por</th>
-            <th>Fecha</th>
-            <th>Acciones</th>
+            <th>Fecha Registro</th>
+            <th class="text-right">Acción</th>
           </tr>
         </thead>
         <tbody>
           @for (inc of filtradas; track inc.id) {
             <tr>
-              <td><code>{{ inc.codigo }}</code></td>
-              <td>{{ inc.titulo }}</td>
+              <td>
+                <span class="code-pill">{{ inc.codigo }}</span>
+              </td>
+              <td>
+                <div class="inc-title-cell">
+                  <span class="inc-title-text">{{ inc.titulo }}</span>
+                  <span class="inc-area-tag">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    {{ inc.areaAfectada }}
+                  </span>
+                </div>
+              </td>
               <td><span class="badge badge--{{ inc.categoria }}">{{ inc.categoria }}</span></td>
               <td><span class="badge badge--{{ inc.estado }}">{{ inc.estado }}</span></td>
               <td><span class="badge badge--{{ inc.prioridad }}">{{ inc.prioridad }}</span></td>
-              <td class="text-muted" style="font-size:0.85rem">{{ inc.usuarioReportadorCorreo }}</td>
-              <td>{{ inc.fechaCreacion | date:'dd/MM/yy HH:mm' }}</td>
               <td>
-                <div class="actions-col">
-                  <a [routerLink]="['/incidencias', inc.id]" class="btn btn--outline btn--sm">Ver</a>
-                </div>
+                <span class="reporter-email" [title]="inc.usuarioReportadorCorreo">
+                  {{ inc.usuarioReportadorCorreo }}
+                </span>
+              </td>
+              <td>
+                <span class="date-text">{{ inc.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</span>
+              </td>
+              <td class="text-right">
+                <a [routerLink]="['/incidencias', inc.id]" class="btn btn--outline btn--sm btn-view">
+                  <span>Detalle</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </a>
               </td>
             </tr>
           }
         </tbody>
       </table>
     </div>
-    <p class="text-muted mt-1" style="font-size:0.85rem; text-align:right">{{ filtradas.length }} incidencia(s)</p>
+    <div class="table-footer">
+      <span>Mostrando {{ filtradas.length }} de {{ incidencias().length }} ticket(s) en total</span>
+    </div>
   }
 </div>

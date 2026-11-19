@@ -1,74 +1,149 @@
 <div class="page-wrapper">
+  <!-- Breadcrumb & Page Header -->
   <div class="page-header">
-    <h2>➕ Nueva Incidencia</h2>
-    <a routerLink="/incidencias" class="btn btn--outline">← Volver</a>
+    <div class="page-title-group">
+      <div class="breadcrumb">
+        <a routerLink="/incidencias" class="breadcrumb-link">Incidencias</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">Nueva Incidencia</span>
+      </div>
+      <h2>
+        <span class="title-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+          </svg>
+        </span>
+        Registro de Incidencia TI
+      </h2>
+      <p>Reporta una falla técnica o requerimiento de soporte para asignación y resolución.</p>
+    </div>
+    <div class="page-actions">
+      <a routerLink="/incidencias" class="btn btn--outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        </svg>
+        <span>Volver a la bandeja</span>
+      </a>
+    </div>
   </div>
 
-  <div class="card" style="max-width: 700px; margin: 0 auto;">
-    @if (errorMsg) { <div class="alert alert--error">{{ errorMsg }}</div> }
-    @if (successMsg) { <div class="alert alert--success">{{ successMsg }}</div> }
+  <div class="form-container">
+    <div class="card form-card">
+      @if (errorMsg) {
+        <div class="alert alert--error">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span>{{ errorMsg }}</span>
+        </div>
+      }
+      @if (successMsg) {
+        <div class="alert alert--success">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <span>{{ successMsg }}</span>
+        </div>
+      }
 
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <div class="form-group">
-        <label>Título *</label>
-        <input type="text" formControlName="titulo" placeholder="Describe brevemente el problema" />
-        @if (f['titulo'].invalid && f['titulo'].touched) {
-          <span class="form-error">El título es obligatorio (máx. 150 caracteres).</span>
-        }
-      </div>
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <!-- Sección 1: Información General -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">1</span>
+            <span>Descripción del Problema</span>
+          </div>
 
-      <div class="form-group">
-        <label>Descripción *</label>
-        <textarea formControlName="descripcion" placeholder="Detalla el problema con la mayor información posible..."></textarea>
-        @if (f['descripcion'].invalid && f['descripcion'].touched) {
-          <span class="form-error">La descripción es obligatoria.</span>
-        }
-      </div>
+          <div class="form-group">
+            <label>Título del Ticket *</label>
+            <input
+              type="text"
+              formControlName="titulo"
+              placeholder="Ej: Impresora en piso 2 atascada con mensaje de error en panel"
+            />
+            @if (f['titulo'].invalid && f['titulo'].touched) {
+              <span class="form-error">El título es obligatorio (máximo 150 caracteres).</span>
+            }
+          </div>
 
-      <div class="form-group">
-        <label>Área Afectada *</label>
-        <input type="text" formControlName="areaAfectada" placeholder="Ej: Contabilidad, Ventas, Recursos Humanos" />
-        @if (f['areaAfectada'].invalid && f['areaAfectada'].touched) {
-          <span class="form-error">El área afectada es obligatoria.</span>
-        }
-      </div>
+          <div class="form-group">
+            <label>Descripción Detallada *</label>
+            <textarea
+              formControlName="descripcion"
+              rows="4"
+              placeholder="Explica qué estaba ocurriendo, qué error o comportamiento anormal se presenta y desde cuándo..."
+            ></textarea>
+            @if (f['descripcion'].invalid && f['descripcion'].touched) {
+              <span class="form-error">Proporciona una descripción clara de la incidencia.</span>
+            }
+          </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Categoría *</label>
-          <select formControlName="categoria">
-            <option value="">Seleccionar...</option>
-            <option value="HARDWARE">Hardware</option>
-            <option value="SOFTWARE">Software</option>
-            <option value="RED">Red</option>
-            <option value="TELEFONIA_IP">Telefonía IP</option>
-          </select>
-          @if (f['categoria'].invalid && f['categoria'].touched) {
-            <span class="form-error">Selecciona una categoría.</span>
-          }
+          <div class="form-group">
+            <label>Área o Departamento Afectado *</label>
+            <input
+              type="text"
+              formControlName="areaAfectada"
+              placeholder="Ej: Contabilidad, Ventas, Recursos Humanos, Operaciones"
+            />
+            @if (f['areaAfectada'].invalid && f['areaAfectada'].touched) {
+              <span class="form-error">El área afectada es obligatoria.</span>
+            }
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>Prioridad *</label>
-          <select formControlName="prioridad">
-            <option value="">Seleccionar...</option>
-            <option value="ALTA">🔴 Alta</option>
-            <option value="MEDIA">🟡 Media</option>
-            <option value="BAJA">🟢 Baja</option>
-          </select>
-          @if (f['prioridad'].invalid && f['prioridad'].touched) {
-            <span class="form-error">Selecciona una prioridad.</span>
-          }
-        </div>
-      </div>
+        <!-- Sección 2: Clasificación Técnica -->
+        <div class="form-section">
+          <div class="section-title">
+            <span class="section-num">2</span>
+            <span>Clasificación y Severidad</span>
+          </div>
 
-      <div class="flex-gap mt-2">
-        <button type="submit" class="btn btn--primary" [disabled]="loading">
-          @if (loading) { <span class="spinner spinner--sm"></span> Guardando... }
-          @else { 💾 Crear Incidencia }
-        </button>
-        <a routerLink="/incidencias" class="btn btn--outline">Cancelar</a>
-      </div>
-    </form>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Categoría Técnica *</label>
+              <select formControlName="categoria">
+                <option value="">Seleccione una categoría...</option>
+                <option value="HARDWARE">💻 Hardware (Equipos, Pantallas, Periféricos)</option>
+                <option value="SOFTWARE">📦 Software (Sistemas, ERP, Office, Apps)</option>
+                <option value="RED">🌐 Red (Internet, Switch, Wi-Fi, DHCP)</option>
+                <option value="TELEFONIA_IP">📞 Telefonía IP (Anexos, Asterisk, Auriculares)</option>
+              </select>
+              @if (f['categoria'].invalid && f['categoria'].touched) {
+                <span class="form-error">Selecciona la categoría técnica del problema.</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label>Nivel de Prioridad *</label>
+              <select formControlName="prioridad">
+                <option value="">Seleccione prioridad...</option>
+                <option value="ALTA">🔴 Alta (Detiene operaciones críticas)</option>
+                <option value="MEDIA">🟡 Media (Afecta parcialmente el trabajo)</option>
+                <option value="BAJA">🟢 Baja (Consulta o problema menor)</option>
+              </select>
+              @if (f['prioridad'].invalid && f['prioridad'].touched) {
+                <span class="form-error">Selecciona un nivel de prioridad.</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer / Acciones -->
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary btn--lg" [disabled]="loading">
+            @if (loading) {
+              <span class="spinner spinner--sm"></span>
+              <span>Registrando ticket en BD...</span>
+            } @else {
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+              </svg>
+              <span>Generar y Registrar Incidencia</span>
+            }
+          </button>
+          <a routerLink="/incidencias" class="btn btn--outline btn--lg">Cancelar</a>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

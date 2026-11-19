@@ -1,105 +1,218 @@
 <div class="page-wrapper">
+  <!-- Header -->
   <div class="page-header">
-    <h2>👥 Gestión de Usuarios</h2>
-    <button class="btn btn--primary" (click)="abrirCrear()">➕ Nuevo Usuario</button>
+    <div class="page-title-group">
+      <h2>
+        <span class="title-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </span>
+        Administración de Usuarios y Cuentas
+      </h2>
+      <p>Mantenimiento de colaboradores, técnicos y administradores con control de accesos.</p>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn--primary" (click)="abrirCrear()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        <span>Nuevo Usuario</span>
+      </button>
+    </div>
   </div>
 
-  @if (errorMsg()) { <div class="alert alert--error">{{ errorMsg() }}</div> }
-  @if (successMsg()) { <div class="alert alert--success">{{ successMsg() }}</div> }
-
-  <!-- Formulario modal-like -->
-  @if (showForm) {
-    <div class="card mb-2" style="max-width: 620px; margin: 0 auto 1.5rem;">
-      <div class="card__header">{{ editingId ? '✏️ Editar' : '➕ Crear' }} Usuario</div>
-      <form [formGroup]="form" (ngSubmit)="guardar()">
-        <div class="form-group">
-          <label>Correo Corporativo *</label>
-          <input type="email" formControlName="correoCorporativo" placeholder="usuario@empresa.com" />
-          @if (f['correoCorporativo'].invalid && f['correoCorporativo'].touched) {
-            <span class="form-error">Correo válido requerido.</span>
-          }
-        </div>
-        <div class="form-group">
-          <label>Contraseña {{ editingId ? '(dejar vacío para mantener)' : '*' }}</label>
-          <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres" />
-          @if (f['password'].invalid && f['password'].touched) {
-            <span class="form-error">Mínimo 6 caracteres.</span>
-          }
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Área *</label>
-            <input type="text" formControlName="area" placeholder="Ej: TI, Contabilidad" />
-          </div>
-          <div class="form-group">
-            <label>Rol *</label>
-            <select formControlName="rol">
-              <option value="">Seleccionar...</option>
-              <option value="ADMINISTRADOR_TI">Administrador TI</option>
-              <option value="TECNICO_SOPORTE">Técnico Soporte</option>
-              <option value="COLABORADOR">Colaborador</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Estado</label>
-          <select formControlName="activo">
-            <option [value]="true">Activo</option>
-            <option [value]="false">Inactivo</option>
-          </select>
-        </div>
-        <div class="flex-gap">
-          <button type="submit" class="btn btn--success" [disabled]="saving()">
-            @if (saving()) { <span class="spinner spinner--sm"></span> } @else { 💾 Guardar }
-          </button>
-          <button type="button" class="btn btn--outline" (click)="cancelar()">Cancelar</button>
-        </div>
-      </form>
+  @if (errorMsg()) {
+    <div class="alert alert--error">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span>{{ errorMsg() }}</span>
+    </div>
+  }
+  @if (successMsg()) {
+    <div class="alert alert--success">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      <span>{{ successMsg() }}</span>
     </div>
   }
 
-  <!-- Tabla -->
+  <!-- Modern Modal Dialog for Create/Edit -->
+  @if (showForm) {
+    <div class="modal-backdrop" (click)="cancelar()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <span class="modal-icon">
+              @if (editingId) {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                </svg>
+              } @else {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
+                </svg>
+              }
+            </span>
+            <h3>{{ editingId ? 'Actualizar Datos de Usuario' : 'Registrar Nuevo Usuario' }}</h3>
+          </div>
+          <button class="modal-close-btn" (click)="cancelar()" title="Cerrar ventana">✕</button>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="guardar()">
+          <div class="form-group">
+            <label>Correo Electrónico Corporativo *</label>
+            <input type="email" formControlName="correoCorporativo" placeholder="usuario@empresa.com" />
+            @if (f['correoCorporativo'].invalid && f['correoCorporativo'].touched) {
+              <span class="form-error">Ingresa un correo corporativo válido.</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>
+              Contraseña
+              @if (editingId) {
+                <span class="label-hint">(dejar vacío para mantener la actual)</span>
+              } @else {
+                *
+              }
+            </label>
+            <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres" />
+            @if (f['password'].invalid && f['password'].touched) {
+              <span class="form-error">La contraseña debe tener al menos 6 caracteres.</span>
+            }
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Área o Departamento *</label>
+              <input type="text" formControlName="area" placeholder="Ej: TI, Contabilidad, Operaciones" />
+              @if (f['area'].invalid && f['area'].touched) {
+                <span class="form-error">El área es requerida.</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label>Rol en el Sistema *</label>
+              <select formControlName="rol">
+                <option value="">Seleccione rol...</option>
+                <option value="ADMINISTRADOR_TI">👑 Administrador TI</option>
+                <option value="TECNICO_SOPORTE">🛠️ Técnico Soporte</option>
+                <option value="COLABORADOR">👤 Colaborador</option>
+              </select>
+              @if (f['rol'].invalid && f['rol'].touched) {
+                <span class="form-error">Selecciona un rol.</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Estado de Cuenta</label>
+            <select formControlName="activo">
+              <option [value]="true">🟢 Cuenta Activa (Permite iniciar sesión)</option>
+              <option [value]="false">🔴 Cuenta Inactiva (Bloqueado temporalmente)</option>
+            </select>
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn--primary btn--lg" [disabled]="saving()">
+              @if (saving()) {
+                <span class="spinner spinner--sm"></span>
+                <span>Guardando en BD...</span>
+              } @else {
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/>
+                </svg>
+                <span>Guardar Usuario</span>
+              }
+            </button>
+            <button type="button" class="btn btn--outline btn--lg" (click)="cancelar()">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Users Table Card -->
   @if (loading()) {
     <div class="loading-center"><div class="spinner"></div></div>
   } @else if (usuarios().length === 0) {
-    <p class="empty-state">No hay usuarios registrados.</p>
+    <div class="card empty-state">
+      <div class="empty-icon">👥</div>
+      <p class="font-semibold">Sin usuarios registrados</p>
+      <p class="text-muted">Aún no se han configurado cuentas en la plataforma.</p>
+    </div>
   } @else {
     <div class="table-wrapper">
       <table>
         <thead>
           <tr>
-            <th>#</th>
-            <th>Correo Corporativo</th>
+            <th>ID</th>
+            <th>Colaborador / Correo</th>
             <th>Área</th>
-            <th>Rol</th>
+            <th>Rol de Acceso</th>
             <th>Estado</th>
-            <th>Acciones</th>
+            <th class="text-right">Acciones</th>
           </tr>
         </thead>
         <tbody>
           @for (u of usuarios(); track u.id) {
             <tr>
-              <td>{{ u.id }}</td>
-              <td>{{ u.correoCorporativo }}</td>
-              <td>{{ u.area }}</td>
-              <td><span class="badge badge--SOFTWARE">{{ u.rol }}</span></td>
               <td>
-                @if (u.activo) {
-                  <span class="badge badge--RESUELTO">Activo</span>
-                } @else {
-                  <span class="badge badge--ALTA">Inactivo</span>
-                }
+                <span class="id-tag">#{{ u.id }}</span>
               </td>
               <td>
-                <div class="actions-col">
-                  <button class="btn btn--outline btn--sm" (click)="abrirEditar(u)">✏️ Editar</button>
-                  <button class="btn btn--danger btn--sm" (click)="eliminar(u.id)">🗑️</button>
+                <div class="user-cell">
+                  <div class="user-avatar-small">
+                    {{ u.correoCorporativo.substring(0, 2).toUpperCase() }}
+                  </div>
+                  <span class="user-name-text">{{ u.correoCorporativo }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="area-badge">{{ u.area }}</span>
+              </td>
+              <td>
+                <span class="role-chip role-chip--{{ u.rol }}">
+                  {{ u.rol.replace('_', ' ') }}
+                </span>
+              </td>
+              <td>
+                @if (u.activo) {
+                  <span class="status-pill status-pill--active">
+                    <span class="status-dot"></span> Activo
+                  </span>
+                } @else {
+                  <span class="status-pill status-pill--inactive">
+                    <span class="status-dot"></span> Inactivo
+                  </span>
+                }
+              </td>
+              <td class="text-right">
+                <div class="actions-col" style="justify-content: flex-end;">
+                  <button class="btn btn--outline btn--sm" (click)="abrirEditar(u)" title="Editar datos del usuario">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                    </svg>
+                    <span>Editar</span>
+                  </button>
+                  <button class="btn btn--danger btn--sm btn-icon-only" (click)="eliminar(u.id)" title="Desactivar usuario">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
                 </div>
               </td>
             </tr>
           }
         </tbody>
       </table>
+    </div>
+    <div class="table-footer">
+      <span>Total: <strong>{{ usuarios().length }}</strong> cuentas registradas en la base de datos</span>
     </div>
   }
 </div>

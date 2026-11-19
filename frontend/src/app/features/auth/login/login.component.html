@@ -1,18 +1,41 @@
 <div class="login-page">
+  <div class="login-backdrop">
+    <div class="glow-orb glow-orb--1"></div>
+    <div class="glow-orb glow-orb--2"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
   <div class="login-card">
     <div class="login-card__header">
-      <div class="login-card__icon">🛡️</div>
-      <h1>Gestor de Incidencias</h1>
-      <p>Accede con un rol de prueba o ingresa tus credenciales</p>
+      <div class="brand-badge">
+        <span class="brand-badge__icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </span>
+      </div>
+      <h1>NexaTel Intranet</h1>
+      <p class="subtitle">Sistema Integrado de Gestión de Incidencias de TI</p>
     </div>
 
     @if (errorMsg) {
-      <div class="alert alert--error">{{ errorMsg }}</div>
+      <div class="alert alert--error">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>
+        </svg>
+        <span>{{ errorMsg }}</span>
+      </div>
     }
 
     <!-- Botones de acceso rápido para demostración -->
     <div class="demo-section">
-      <div class="demo-title">⚡ Acceso Rápido por Rol</div>
+      <div class="demo-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        Acceso Rápido Demo (1-Click)
+      </div>
       <div class="demo-buttons">
         @for (cuenta of cuentasDemo; track cuenta.correo) {
           <button
@@ -20,49 +43,66 @@
             class="demo-btn"
             [disabled]="loading"
             (click)="ingresarComo(cuenta.correo)"
-            [title]="'Ingresar como ' + cuenta.rol"
+            [title]="'Ingresar con perfil de ' + cuenta.rol"
           >
             <span class="demo-btn__icon">{{ cuenta.icono }}</span>
             <div class="demo-btn__info">
-              <span class="demo-btn__role">{{ cuenta.rol }}</span>
+              <div class="demo-btn__top">
+                <span class="demo-btn__role">{{ cuenta.rol }}</span>
+                <span class="demo-btn__tag">{{ cuenta.descripcion }}</span>
+              </div>
               <span class="demo-btn__email">{{ cuenta.correo }}</span>
             </div>
-            <span class="demo-btn__arrow">→</span>
+            <span class="demo-btn__arrow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </span>
           </button>
         }
       </div>
     </div>
 
     <div class="divider">
-      <span>o ingresa manualmente</span>
+      <span>o ingresa con tu cuenta</span>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()">
       <div class="form-group">
-        <label for="email">Correo Corporativo</label>
+        <label for="email">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+          Correo Corporativo
+        </label>
         <input
           id="email"
           type="email"
           formControlName="correoCorporativo"
-          placeholder="usuario@empresa.com"
+          placeholder="nombre.apellido@empresa.com"
           autocomplete="email"
         />
         @if (email.invalid && email.touched) {
-          <span class="form-error">Ingresa un correo válido.</span>
+          <span class="form-error">Ingresa un correo institucional válido.</span>
         }
       </div>
 
       <div class="form-group">
-        <label for="pass">Contraseña</label>
+        <label for="pass">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Contraseña
+        </label>
         <input
           id="pass"
           type="password"
           formControlName="password"
-          placeholder="••••••••"
+          placeholder="••••••••••••"
           autocomplete="current-password"
         />
         @if (pass.invalid && pass.touched) {
-          <span class="form-error">Mínimo 6 caracteres.</span>
+          <span class="form-error">La contraseña debe tener mínimo 6 caracteres.</span>
         }
       </div>
 
@@ -72,16 +112,23 @@
         [disabled]="loading"
       >
         @if (loading) {
-          <span class="spinner spinner--sm"></span> Ingresando...
+          <span class="spinner spinner--sm"></span>
+          <span>Autenticando usuario...</span>
         } @else {
-          Iniciar Sesión
+          <span>Iniciar Sesión en Intranet</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
         }
       </button>
     </form>
 
     <div class="login-footer">
-      <small>Clave por defecto: <code>password123</code></small>
+      <div class="credential-pill">
+        <span>Clave universal de prueba:</span>
+        <code>password123</code>
+      </div>
+      <p class="copyright">NexaTel Comunicaciones S.A.C. &copy; 2026</p>
     </div>
   </div>
 </div>
-

@@ -1,35 +1,82 @@
 <nav class="navbar">
-  <div class="navbar__brand">
-    <a routerLink="/dashboard" class="navbar__logo">
-      🛡️ GestorIncidencias
-    </a>
-  </div>
-
-  <button class="navbar__toggle" (click)="toggleMenu()" aria-label="Menú">
-    <span></span><span></span><span></span>
-  </button>
-
-  <div class="navbar__menu" [class.navbar__menu--open]="menuOpen">
-    <a routerLink="/incidencias" routerLinkActive="active" (click)="closeMenu()">
-      📋 Incidencias
-    </a>
-    <a routerLink="/incidencias/nueva" routerLinkActive="active" (click)="closeMenu()">
-      ➕ Nueva
-    </a>
-    @if (auth.isAdmin()) {
-      <a routerLink="/usuarios" routerLinkActive="active" (click)="closeMenu()">
-        👥 Usuarios
+  <div class="navbar__container">
+    <div class="navbar__brand">
+      <a routerLink="/dashboard" class="navbar__logo">
+        <span class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </span>
+        <span class="logo-text">NexaTel <span class="logo-sub">Intranet TI</span></span>
       </a>
-      <a routerLink="/estadisticas" routerLinkActive="active" (click)="closeMenu()">
-        📊 Estadísticas
-      </a>
-    }
+    </div>
 
-    <div class="navbar__user">
-      <span class="navbar__badge">{{ user?.rol }}</span>
-      <span class="navbar__email">{{ user?.correoCorporativo }}</span>
-      <button class="btn btn--danger btn--sm" (click)="logout()">Salir</button>
+    <button class="navbar__toggle" (click)="toggleMenu()" aria-label="Abrir menú de navegación">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="navbar__menu" [class.navbar__menu--open]="menuOpen">
+      <div class="navbar__links">
+        <a routerLink="/dashboard" routerLinkActive="active" (click)="closeMenu()">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/>
+            <rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+          </svg>
+          Dashboard
+        </a>
+        <a routerLink="/incidencias" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeMenu()">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+            <rect width="8" height="4" x="8" y="2" rx="1"/>
+            <path d="M9 14h6"/><path d="M9 18h6"/>
+          </svg>
+          Incidencias
+        </a>
+        <a routerLink="/incidencias/nueva" routerLinkActive="active" (click)="closeMenu()" class="nav-highlight">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/>
+          </svg>
+          Nueva Incidencia
+        </a>
+        @if (auth.isAdmin()) {
+          <a routerLink="/usuarios" routerLinkActive="active" (click)="closeMenu()">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            Usuarios
+          </a>
+          <a routerLink="/estadisticas" routerLinkActive="active" (click)="closeMenu()">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+            </svg>
+            Estadísticas
+          </a>
+        }
+      </div>
+
+      <div class="navbar__user">
+        <div class="user-info">
+          <div class="user-avatar">
+            {{ user?.correoCorporativo?.substring(0, 2)?.toUpperCase() || 'US' }}
+          </div>
+          <div class="user-details">
+            <span class="user-email">{{ user?.correoCorporativo }}</span>
+            <span class="user-badge user-badge--{{ user?.rol }}">
+              {{ user?.rol?.replace('_', ' ') }}
+            </span>
+          </div>
+        </div>
+        <button class="btn-logout" (click)="logout()" title="Cerrar sesión">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" x2="9" y1="12" y2="12"/>
+          </svg>
+          <span>Salir</span>
+        </button>
+      </div>
     </div>
   </div>
 </nav>
-

@@ -1,74 +1,162 @@
 <div class="page-wrapper">
+  <!-- Header -->
   <div class="page-header">
-    <h2>📊 Estadísticas del Sistema</h2>
+    <div class="page-title-group">
+      <h2>
+        <span class="title-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+          </svg>
+        </span>
+        Métricas y Estadísticas del Sistema
+      </h2>
+      <p>Indicadores clave de rendimiento (KPIs), distribución por categorías y niveles de prioridad.</p>
+    </div>
+    <div class="page-actions">
+      <a routerLink="/incidencias" class="btn btn--outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+          <rect width="8" height="4" x="8" y="2" rx="1"/>
+        </svg>
+        <span>Ver Incidencias</span>
+      </a>
+    </div>
   </div>
 
   @if (loading()) {
     <div class="loading-center"><div class="spinner"></div></div>
   } @else if (error()) {
-    <div class="alert alert--error">{{ error() }}</div>
+    <div class="alert alert--error">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span>{{ error() }}</span>
+    </div>
   } @else if (stats(); as s) {
-    <!-- Resumen general -->
+    <!-- KPI Overview Cards -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-card__icon">📋</div>
+        <div class="stat-card__top">
+          <div class="stat-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 8h6"/><path d="M9 12h6"/><path d="M9 16h4"/>
+            </svg>
+          </div>
+          <span class="stat-card__indicator">100% Total</span>
+        </div>
         <div class="stat-card__label">Total Incidencias</div>
         <div class="stat-card__value">{{ s.pendientes + s.enProceso + s.resueltas }}</div>
       </div>
+
       <div class="stat-card stat-card--warning">
-        <div class="stat-card__icon">⏳</div>
-        <div class="stat-card__label">Pendientes</div>
+        <div class="stat-card__top">
+          <div class="stat-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <span class="stat-card__indicator stat-card__indicator--warning">Pendientes</span>
+        </div>
+        <div class="stat-card__label">Por Asignar / Atender</div>
         <div class="stat-card__value">{{ s.pendientes }}</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-card__icon">🔧</div>
-        <div class="stat-card__label">En Proceso</div>
+
+      <div class="stat-card stat-card--info">
+        <div class="stat-card__top">
+          <div class="stat-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+            </svg>
+          </div>
+          <span class="stat-card__indicator stat-card__indicator--info">Operativo</span>
+        </div>
+        <div class="stat-card__label">En Proceso Técnico</div>
         <div class="stat-card__value">{{ s.enProceso }}</div>
       </div>
+
       <div class="stat-card stat-card--success">
-        <div class="stat-card__icon">✅</div>
-        <div class="stat-card__label">Resueltas</div>
+        <div class="stat-card__top">
+          <div class="stat-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <span class="stat-card__indicator stat-card__indicator--success">Resueltas</span>
+        </div>
+        <div class="stat-card__label">Tickets Solucionados</div>
         <div class="stat-card__value">{{ s.resueltas }}</div>
       </div>
     </div>
 
+    <!-- Analytics Breakdown Grid -->
     <div class="stats-detail-grid">
-      <!-- Por categoría -->
-      <div class="card">
-        <div class="card__header">📂 Por Categoría</div>
+      <!-- Por Categoría -->
+      <div class="card chart-card">
+        <div class="card__header">
+          <div class="header-left">
+            <span class="card-header-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+              </svg>
+            </span>
+            <span>Distribución por Especialidad Técnica</span>
+          </div>
+        </div>
+
         @if (categorias.length === 0) {
-          <p class="text-muted">Sin datos</p>
+          <div class="empty-state">
+            <p class="text-muted">No hay datos agrupados por categoría.</p>
+          </div>
         } @else {
-          @for (cat of categorias; track cat.nombre) {
-            <div class="stat-row">
-              <span class="badge badge--{{ cat.nombre }}">{{ cat.nombre }}</span>
-              <div class="stat-bar-wrapper">
-                <div class="stat-bar" [style.width.%]="(cat.valor / (s.totalIncidencias || s.total || 1)) * 100"></div>
+          <div class="bars-container">
+            @for (cat of categorias; track cat.nombre) {
+              <div class="stat-row">
+                <div class="stat-label-group">
+                  <span class="badge badge--{{ cat.nombre }}">{{ cat.nombre }}</span>
+                  <span class="stat-val-count">{{ cat.valor }} tickets</span>
+                </div>
+                <div class="stat-bar-wrapper">
+                  <div class="stat-bar stat-bar--cat" [style.width.%]="(cat.valor / (s.totalIncidencias || s.total || 1)) * 100"></div>
+                </div>
               </div>
-              <span class="stat-num">{{ cat.valor }}</span>
-            </div>
-          }
+            }
+          </div>
         }
       </div>
 
-      <!-- Por prioridad -->
-      <div class="card">
-        <div class="card__header">⚡ Por Prioridad</div>
+      <!-- Por Prioridad -->
+      <div class="card chart-card">
+        <div class="card__header">
+          <div class="header-left">
+            <span class="card-header-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </span>
+            <span>Clasificación por Nivel de Severidad</span>
+          </div>
+        </div>
+
         @if (prioridades.length === 0) {
-          <p class="text-muted">Sin datos</p>
+          <div class="empty-state">
+            <p class="text-muted">No hay datos agrupados por prioridad.</p>
+          </div>
         } @else {
-          @for (prio of prioridades; track prio.nombre) {
-            <div class="stat-row">
-              <span class="badge badge--{{ prio.nombre }}">{{ prio.nombre }}</span>
-              <div class="stat-bar-wrapper">
-                <div class="stat-bar stat-bar--{{ prio.nombre }}" [style.width.%]="(prio.valor / (s.totalIncidencias || s.total || 1)) * 100"></div>
+          <div class="bars-container">
+            @for (prio of prioridades; track prio.nombre) {
+              <div class="stat-row">
+                <div class="stat-label-group">
+                  <span class="badge badge--{{ prio.nombre }}">{{ prio.nombre }}</span>
+                  <span class="stat-val-count">{{ prio.valor }} tickets</span>
+                </div>
+                <div class="stat-bar-wrapper">
+                  <div class="stat-bar stat-bar--{{ prio.nombre }}" [style.width.%]="(prio.valor / (s.totalIncidencias || s.total || 1)) * 100"></div>
+                </div>
               </div>
-              <span class="stat-num">{{ prio.valor }}</span>
-            </div>
-          }
+            }
+          </div>
         }
       </div>
     </div>
   }
 </div>
-

@@ -1,71 +1,150 @@
 <div class="page-wrapper">
-  <div class="page-header">
-    <div>
-      <h1>Dashboard</h1>
-      <p class="text-muted">Bienvenido, <strong>{{ user?.correoCorporativo }}</strong></p>
+  <!-- Hero / Welcome Header -->
+  <div class="dashboard-hero">
+    <div class="hero-content">
+      <div class="user-greeting">
+        <span class="greeting-badge">
+          <span class="pulse-dot"></span>
+          Sesión Activa: {{ user?.rol?.replace('_', ' ') }}
+        </span>
+        <h1>Panel de Control</h1>
+        <p class="hero-desc">Bienvenido de vuelta, <strong>{{ user?.correoCorporativo }}</strong>. Aquí tienes el estado actual del centro de soporte TI.</p>
+      </div>
     </div>
-    <a routerLink="/incidencias/nueva" class="btn btn--primary">➕ Nueva Incidencia</a>
+    <div class="hero-actions">
+      <a routerLink="/incidencias/nueva" class="btn btn--primary btn--lg">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/>
+        </svg>
+        <span>Reportar Nueva Incidencia</span>
+      </a>
+      <a routerLink="/incidencias" class="btn btn--outline btn--lg">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+          <rect width="8" height="4" x="8" y="2" rx="1"/>
+        </svg>
+        <span>Ver Todas</span>
+      </a>
+    </div>
   </div>
 
   @if (loading()) {
     <div class="loading-center"><div class="spinner"></div></div>
   } @else {
+    <!-- Stats KPI Grid -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-card__icon">📋</div>
-        <div class="stat-card__label">Total</div>
+        <div class="stat-card__top">
+          <div class="stat-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 8h6"/><path d="M9 12h6"/><path d="M9 16h4"/>
+            </svg>
+          </div>
+          <span class="stat-card__indicator">Total Registros</span>
+        </div>
+        <div class="stat-card__label">Incidencias Totales</div>
         <div class="stat-card__value">{{ incidencias().length }}</div>
       </div>
+
       <div class="stat-card stat-card--warning">
-        <div class="stat-card__icon">⏳</div>
+        <div class="stat-card__top">
+          <div class="stat-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <span class="stat-card__indicator stat-card__indicator--warning">Por Atender</span>
+        </div>
         <div class="stat-card__label">Pendientes</div>
         <div class="stat-card__value">{{ pendientes }}</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-card__icon">🔧</div>
+
+      <div class="stat-card stat-card--info">
+        <div class="stat-card__top">
+          <div class="stat-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+            </svg>
+          </div>
+          <span class="stat-card__indicator stat-card__indicator--info">En Diagnóstico</span>
+        </div>
         <div class="stat-card__label">En Proceso</div>
         <div class="stat-card__value">{{ enProceso }}</div>
       </div>
+
       <div class="stat-card stat-card--success">
-        <div class="stat-card__icon">✅</div>
+        <div class="stat-card__top">
+          <div class="stat-card__icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <span class="stat-card__indicator stat-card__indicator--success">Finalizadas</span>
+        </div>
         <div class="stat-card__label">Resueltas</div>
         <div class="stat-card__value">{{ resueltas }}</div>
       </div>
     </div>
 
+    <!-- Recientes Section -->
     <div class="card">
-      <div class="card__header">📌 Últimas Incidencias</div>
+      <div class="card__header">
+        <div class="header-left">
+          <span class="card-header-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </span>
+          <span>Actividad Reciente del Soporte TI</span>
+        </div>
+        <a routerLink="/incidencias" class="header-link">Ver catálogo completo →</a>
+      </div>
+
       @if (recientes.length === 0) {
-        <p class="empty-state">No hay incidencias registradas aún.</p>
+        <div class="empty-state">
+          <div class="empty-icon">📂</div>
+          <p class="font-semibold">Sin incidencias registradas</p>
+          <p class="text-muted">Aún no hay tickets creados en la plataforma.</p>
+          <a routerLink="/incidencias/nueva" class="btn btn--primary btn--sm mt-2">Crear el primer ticket</a>
+        </div>
       } @else {
         <div class="table-wrapper">
           <table>
             <thead>
               <tr>
-                <th>Código</th>
-                <th>Título</th>
+                <th>Ticket ID</th>
+                <th>Título / Asunto</th>
                 <th>Estado</th>
                 <th>Prioridad</th>
-                <th>Fecha</th>
-                <th>Acción</th>
+                <th>Categoría</th>
+                <th>Fecha de Apertura</th>
+                <th class="text-right">Acción</th>
               </tr>
             </thead>
             <tbody>
               @for (inc of recientes; track inc.id) {
                 <tr>
                   <td><code>{{ inc.codigo }}</code></td>
-                  <td>{{ inc.titulo }}</td>
+                  <td>
+                    <span class="inc-title">{{ inc.titulo }}</span>
+                    <span class="inc-area">{{ inc.areaAfectada }}</span>
+                  </td>
                   <td><span class="badge badge--{{ inc.estado }}">{{ inc.estado }}</span></td>
                   <td><span class="badge badge--{{ inc.prioridad }}">{{ inc.prioridad }}</span></td>
-                  <td>{{ inc.fechaCreacion | date:'dd/MM/yyyy' }}</td>
-                  <td><a [routerLink]="['/incidencias', inc.id]" class="btn btn--outline btn--sm">Ver</a></td>
+                  <td><span class="badge badge--{{ inc.categoria }}">{{ inc.categoria }}</span></td>
+                  <td class="text-muted">{{ inc.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td class="text-right">
+                    <a [routerLink]="['/incidencias', inc.id]" class="btn btn--outline btn--sm">
+                      <span>Detalle</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"/>
+                      </svg>
+                    </a>
+                  </td>
                 </tr>
               }
             </tbody>
           </table>
-        </div>
-        <div class="mt-2">
-          <a routerLink="/incidencias" class="btn btn--outline">Ver todas →</a>
         </div>
       }
     </div>
