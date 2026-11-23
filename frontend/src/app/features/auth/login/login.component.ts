@@ -21,7 +21,9 @@ export class LoginComponent {
   });
 
   loading = false;
+  coldStartActive = false;
   errorMsg = '';
+  private coldStartTimer: any = null;
 
   readonly cuentasDemo = [
     {
@@ -58,14 +60,27 @@ export class LoginComponent {
   submit() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.loading = true;
+    this.coldStartActive = false;
     this.errorMsg = '';
 
+    // Si la respuesta demora más de 3 segundos (despertar de Eco Dyno en Heroku), se muestra aviso
+    this.coldStartTimer = setTimeout(() => {
+      if (this.loading) {
+        this.coldStartActive = true;
+      }
+    }, 3000);
+
     this.auth.login(this.form.value as any).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
+      next: () => {
+        if (this.coldStartTimer) clearTimeout(this.coldStartTimer);
+        this.router.navigate(['/dashboard']);
+      },
       error: err => {
+        if (this.coldStartTimer) clearTimeout(this.coldStartTimer);
+        this.coldStartActive = false;
         this.errorMsg = err.status === 401
           ? 'Credenciales incorrectas. Verifica tu correo y contraseña.'
-          : 'Error de conexión con el servidor.';
+          : 'Error de conexión con el servidor. Si el servidor estaba suspendido, intenta de nuevo en unos segundos.';
         this.loading = false;
       }
     });

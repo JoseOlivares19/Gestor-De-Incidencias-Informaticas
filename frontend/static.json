@@ -1,0 +1,7 @@
+{
+  "root": "dist/gestor-incidencias/browser",
+  "clean_urls": false,
+  "routes": {
+    "/**": "index.html"
+  }
+}

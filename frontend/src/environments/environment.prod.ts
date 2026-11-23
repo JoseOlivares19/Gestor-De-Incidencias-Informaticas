@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:8080/api'
+  // URL de producción del backend en Heroku (actualizar con el nombre de tu app backend en Heroku)
+  apiUrl: 'https://APP-BACKEND-HEROKU.herokuapp.com/api'
 };
